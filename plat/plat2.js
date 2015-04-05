@@ -238,38 +238,34 @@ var playerXSpeed = 7;
 Player.prototype.move = function(step, level, keys) {
   this.speed.x = 0;
   this.speed.y = 0;
-  if (keys.left) {
-    this.speed.x -= playerXSpeed;
-  }
-  if (keys.right) {
-    this.speed.x += playerXSpeed;
-  }
-  if (keys.down) {
-    this.speed.y += playerXSpeed;
-  }
-  if (keys.up) {
-   this.speed.y -= playerXSpeed;
-  }
+  if (keys.left) this.speed.x -= playerXSpeed;
+  if (keys.right) this.speed.x += playerXSpeed;
+  if (keys.down) this.speed.y += playerXSpeed;
+  if (keys.up) this.speed.y -= playerXSpeed;
 
-  var motion = new Vector(this.speed.x * step, this.speed.y * step);
   var xmotion = new Vector(0, this.speed.y * step);
   var ymotion = new Vector(this.speed.x * step, 0);
 
-  var newPos = this.pos.plus(motion);
-  var obstacle = level.obstacleAt(newPos, this.size);
-  //var obstaclex = level.obstacleAt(xmotion, this.size);
-  //var obstacley = level.obstacleAt(ymotion, this.size);
-  if (obstacle) {
-    react = level.playerTouched(obstacle,null);
+  var obstaclex = level.obstacleAt(this.pos.plus(xmotion), this.size);
+  var obstacley = level.obstacleAt(this.pos.plus(ymotion), this.size);
+
+  if (obstaclex && obstacley) {
+    react = level.playerTouched(obstaclex,null);
     if (react) {
       var bounce = new Vector(-this.speed.x * (step*2), -this.speed.y * (step * 2));
 
        this.pos = this.pos.plus(bounce);
     
     }
-  } else {
-    this.pos = newPos;
-    
+  } else if(obstaclex) {
+    level.playerTouched(obstaclex,null);
+    this.pos = this.pos.plus(ymotion);
+  } else if(obstacley) {
+    level.playerTouched(obstaclex,null)
+    this.pos = this.pos.plus(xmotion);   
+  }else {
+    this.pos = this.pos.plus(xmotion);
+    this.pos = this.pos.plus(ymotion);
   }
 };
 
