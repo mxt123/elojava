@@ -40,39 +40,53 @@ function countAliveNeighbours (grid,x,y){
   for (i= -1;i<2;i++) {
     for (j= -1;j<2;j++){
       var checkX = x+j;
-      var checkY = y+i;      
-      if (checkX >= 0 && checkY >= 0 && grid[checkY][checkX] === 'wall') {
-        count ++;
+      var checkY = y+i;  
+      if (checkX == x && checkY ==y) {
+        // do nothing
+      } else if (checkY <= 0 || checkX <= 0 || checkY >= grid.length || checkX >= grid[0].length) {
+          count +=1;
       }
+      else if (grid[checkY][checkX] == 'wall') {
+         count += 1;
+      } 
     }
   }
   return count;
 }
 
-var changeToStartAlive = 0.45;
+var changeToStartAlive = 0.4;//0.45;
 
 function evolveGrid(grid){
   var newgrid = grid.slice();
-  for (var y = 0; y < grid.length -1; y++) {
-    for (var x = 0; x < grid[0].length -1; x++) {    
+  for (var y = 0; y < grid.length ; y++) {
+    for (var x = 0; x < grid[0].length ; x++) {    
       var count = countAliveNeighbours(grid,x,y);
-      if (count < 2) {
-        newgrid[y][x] = null;
-      } else if (count === 2 ) {
-        newgrid[y][x] = "wall";
-      } else if (count === 3) {
-        newgrid[y][x] = "wall";
-      } //else if (count > 3) {
-        //newgrid[y][x] = null;
-     // }
+      var isAlive = grid[y][x] === "wall";
+      if (isAlive) {
+        if ( count < 3) {
+          newgrid[y][x] = null;
+        } 
+        else {
+          newgrid[y][x] = "wall";
+        } 
+      }
+       else if (!isAlive) {
+        if (count > 4 ){
+          newgrid[y][x] = "wall";
+        } else {
+          newgrid[y][x] = null;
+        }
+      }
+
     }
   }
-  return newgrid;    
+  grid = newgrid;
+  newgrid=undefined;   
 }
 
 function generateGrid(grid){  
-  for (var y = 0; y < grid.length -1; y++) {
-    for (var x = 0; x < grid[0].length -1; x++) {    
+  for (var y = 0; y < grid.length ; y++) {
+    for (var x = 0; x < grid[0].length ; x++) {    
         if (  Math.random() < changeToStartAlive) {
           grid[y][x] = "wall";
         } else {
@@ -108,9 +122,10 @@ function Level(plan) {
   })[0];
   this.status = this.finishDelay = null;
   generateGrid(this.grid);
-  for ( i = 0 ; i < 3; i++) {
-    evolveGrid(this.grid);
+  for ( var count =0 ; count < 6; count++) {
+     evolveGrid(this.grid)
   }
+
 }
 
 Level.prototype.isFinished = function() {
