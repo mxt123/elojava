@@ -1,0 +1,26 @@
+<!doctype html>
+<html ng-app="app" ng-controller="HelloCtrl">
+    <head>
+        <title>Hello AngularJS</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/lodash/4.16.4/lodash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/restangular/1.5.2/restangular.min.js"></script>
+    <script src="hello.js"></script>
+    </head>
+
+    <body>
+        <div >
+
+            <ul ng-repeat="post in posts">
+                <li>
+                    <h4><a href="#" ng-click="show = !show">{{post.title}}</a></h4>
+                        <div class="details" ng-show="show">
+                            {{post.body}}
+                        </div>
+                </li>
+            </ul>
+
+        </div>
+    </body>
+</html>
+
